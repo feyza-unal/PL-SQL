@@ -185,9 +185,145 @@ begin
 
 end $$ ;
 
+--  ************** CONTROL STRUCTERS *************
+
+-- IF STATEMENT --
+--syntax : 
+/*
+if cond. then
+	statement;
+end if;
+*/
+
+-- Task : 0 id li filmi bulalım eğer yoksa ekrana uyarı yazısı verelim
+do $$
+declare
+	istenen_film film%rowtype; 
+	istenen_filmId film.id%type :=10;
+begin 
+	select * from film
+	into istenen_film
+	where id = istenen_filmId; -->id'si 1 olan film
+	
+	if not found then--> eger veri gelmediyse
+		raise notice 'Girdiginiz idli film bulunamadi : %', istenen_filmId;
+	end if;	
+	
+end $$
+
+-- IF THEN ELSE --
+/*
+if cond. then
+	statement;
+else
+	alternative statement;
+end if	
+*/
+
+-- Task : 1 idli film varsa title bilgisini yazınız yoksa uyarı yazısını ekrana basınız
+
+do $$
+declare
+	istenen_film film%rowtype; 
+	istenen_filmId film.id%type :=1;
+begin 
+	select * from film
+	into istenen_film
+	where id = istenen_filmId; 
+	
+	if found then
+		raise notice 'Girdiginiz idli film : %', istenen_film.title;
+	else
+		raise notice 'Girdiginiz idli film bulunamadi : %', istenen_filmId;
+	end if;	
+	
+end $$
 
 
+-- IF THEN ELSE IF (nested)--
+/*
+if cond._1  then
+	statement_1;
+elseif cond_2 then
+	statement_2;
+elseif cond_3 then
+	statement_3;
+else
+	statement_final
+end if	
+*/
 
+
+/* Task : 1 idli film varsa;
+		suresi 50 dk nin altinda ise short,
+		50<length<120 medium,
+		length>120 ise long yazalim
+*/
+
+do $$
+declare
+	x_film film%rowtype;
+	len_description varchar(50);
+
+begin 
+	select * from film
+	into x_film  -- v_film.id = 1  / v_film.title ='Kuzuların Sessizliği'
+	where id = 1; 
+	
+	if not found then
+		raise notice 'Bulunamadi';
+	else
+		if x_film.length > 0 and x_film.length <=50 then
+			len_description ='short';
+		
+		elseif x_film.length>50 and x_film.length<120 then
+			len_description ='medium';
+			
+		elseif x_film.length>120 then
+			len_description='long';
+		else
+			len_description='tanimsiz';
+		end if;
+	raise notice '% filminin suresi: %',x_film.title,len_description;	
+	end if;	
+	
+end $$
+
+-- CASE STATEMENT --
+
+-- syntax :
+ /*
+ 	CASE search-expression
+	 WHEN expression_1 [, expression_2,..] THEN
+	 	statement
+	 [..]
+	 [ELSE
+	 	else-statement]
+	 END case;
+ */
+
+
+-- Task : Filmin türüne göre çocuklara uygun olup olmadığını ekrana yazalım
+
+do $$
+declare
+	uyari varchar(50);
+	tur film.type%type;
+begin
+	select type from film
+	into tur
+	where id = 1;
+	
+	if found then
+		case tur
+			when 'Korku' then uyari='cocuklar icin uygun degil';
+			when 'Macera'then uyari='cocuklar icin uygun';
+			when 'Animasyon' then uyari='cocuklar icin uygun';
+			else uyari ='tanimsiz';
+		end case;
+		raise notice '%',uyari;
+	end if;	
+end $$
 
 
 
