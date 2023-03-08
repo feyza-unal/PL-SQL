@@ -21,7 +21,7 @@ INSERT INTO actor VALUES (2, 'Kevin', 'Spacey');
 INSERT INTO actor VALUES (3, 'Edward', 'Norton');
 
 
-do $$
+do $$  --> anonim oldugunu belirtmek icin
 
 declare
 	film_count integer :=0;
@@ -79,7 +79,7 @@ end $$;
 
 --> kod ayni anda calistigi icin ayni degeri gorduk. kodu sadece bekletip 10 sn sonra yazdi
 
---  ***************** TABLODAN DATA TIPINI KOPYALAMA ***********
+--  ************** TABLODAN DATA TIPINI KOPYALAMA ***********
 /*
 		-> variable_name  table_name.column_name%type;
 		->( Tablodaki datanın aynı data türünde variable oluşturmaya yarıyor)
@@ -88,6 +88,7 @@ end $$;
 do $$
 declare
 	film_title film.title%type; --varchar -> data turunu bilmedigimiz icin dinamik yaptik (film.title%type)
+								--> title'in data turu neyse onu yap
 begin 
 	--1 id li filmin ismini getirelim 
 	select title 
@@ -98,7 +99,7 @@ begin
 	raise notice 'Film title id 1: %' ,film_title;
 end $$	
 
---  ***************** IC ICE BLOK YAPILARI ***********
+--  ************** IC ICE BLOK YAPILARI ***********
 	
 do $$
 <<outher_block>>
@@ -128,7 +129,7 @@ NOTICE:  Counter in the outherBlock is 1
 */
 
 
---  ***************** ROW TYPE ***********
+--  ************** ROW TYPE ***********
 
 do $$
 declare
@@ -144,7 +145,7 @@ begin
 end $$;	
 	
 	
---  ***************** RECORD TYPE ***********
+--  ************* RECORD TYPE ***********
 /*
 		-> Row Type gibi çalışır ama record un tamamı değilde belli başlıkları almak
 		istersek kullanılabilir
@@ -160,3 +161,34 @@ begin
 	where id=1;
 	raise notice '% % %', rec.id, rec.title, rec.type;
 end $$
+
+--  ************** CONSTANT ************* --> degeri degistirilemeyen 
+
+do $$
+declare
+	vat constant numeric :=0.1;
+	net_price numeric :=20.5;
+begin
+	raise notice 'Satis fiyati : %', net_price*(1+vat);
+	-- vat := 0.05; 
+	-- constant bir ifadeyi ilk setleme işleminden sonra değer değiştirmeye çalışırsak hata alırız
+end $$
+
+-- constant bir ifadeye RunTime da değer verebilir miyim ???
+
+do $$
+declare
+	start_at constant time := now();
+
+begin
+	raise notice 'bloğun çalışma zamanı : %', start_at;
+
+end $$ ;
+
+
+
+
+
+
+
+
